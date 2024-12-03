@@ -58,7 +58,7 @@ jobs:
           embed-color: 14701393
           embed-title: Deployment failed
           webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
-      - name: Discord Webhook Action on succeed
+      - name: Deployment success
         uses: tsickert/discord-webhook@v5.3.0
         if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.message), '#skip') && success()}}
         with:
@@ -70,6 +70,8 @@ jobs:
     needs: [simple_deployment_pipeline]
     runs-on: ubuntu-20.04
     steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
       - name: Bump version and push tag
         if: ${{ github.event_name == 'push' && !(contains( join( toJson(github.event.commits.message) ), '#skip')) }}
         uses: anothrNick/github-tag-action@1.71.0
