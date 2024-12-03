@@ -51,6 +51,8 @@ jobs:
       - name: Deploy to render
         if: ${{ github.event_name == 'push' && !contains(github.event.commits.message, '#skip') }}
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_KEY }}?key=${{ secrets.RENDER_API_KEY }}
+      - name: Check Discord Webhook
+        run: echo ${{ secrets.DISCORD_WEBHOOK }}
       - name: Deployment Success
         uses: rjstone/discord-webhook-notify@v1
         if: success()
