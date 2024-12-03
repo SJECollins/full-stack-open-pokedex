@@ -10,4 +10,10 @@ describe("Pokedex", () => {
       )
     ).toBeVisible();
   });
+
+  test("pokemon details can be opened", async ({ page }) => {
+    await page.goto("http://localhost:8080");
+    await page.click("text=ivysaur");
+    await expect(page.getByText("chlorophyll")).toBeVisible();
+  });
 });
