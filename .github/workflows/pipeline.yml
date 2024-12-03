@@ -51,27 +51,20 @@ jobs:
       - name: Deploy to render
         if: ${{ github.event_name == 'push' && !contains(github.event.commits.message, '#skip') }}
         run: curl https://api.render.com/deploy/srv-${{ secrets.RENDER_SERVICE_KEY }}?key=${{ secrets.RENDER_API_KEY }}
-      - name: Deployment Success
-        uses: rjstone/discord-webhook-notify@v1.0.4
-        if: ${{ success() }}
+      - name: Deployment failure
+        uses: tsickert/discord-webhook@v5.3.0
+        if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.message), '#skip') && failure() }}
         with:
-          severity: info
-          details: Deployment Succeeded!
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-      - name: Deployment Failure
-        uses: rjstone/discord-webhook-notify@v1.0.4
-        if: ${{ failure() }}
+          embed-color: 14701393
+          embed-title: Deployment failed
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
+      - name: Discord Webhook Action on succeed
+        uses: tsickert/discord-webhook@v5.3.0
+        if: ${{ github.event_name == 'push' && !contains(join(github.event.commits.message), '#skip') && success()}}
         with:
-          severity: error
-          details: Deployment Failed!
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
-      - name: Deployment Cancelled
-        uses: rjstone/discord-webhook-notify@v1.0.4
-        if: ${{ cancelled() }}
-        with:
-          severity: warn
-          details: Deployment Cancelled!
-          webhookUrl: ${{ secrets.DISCORD_WEBHOOK }}
+          embed-color: 6144854
+          embed-title: Deployment succeeded
+          webhook-url: ${{ secrets.DISCORD_WEBHOOK }}
 
   tag_release:
     needs: [simple_deployment_pipeline]
